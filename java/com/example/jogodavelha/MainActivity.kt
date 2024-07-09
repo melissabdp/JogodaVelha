@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Configura os botões
     private fun configureButtonListeners() {
         val buttons = arrayOf(
             binding.buttonZero, binding.buttonUm, binding.buttonDois,
@@ -58,12 +59,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Função associada com todos os botões @param view é o botão clicado
     fun buttonClick(view: View) {
         //O botão clicado é associado com uma constante
         val buttonSelecionado = view as Button
 
-        //De acordo com o botão clicado, a posição da matriz receberá o Jogador
+        //De acordo com o botão clicado, a posição da matriz receberá o jogador
         when (buttonSelecionado.id) {
             binding.buttonZero.id -> tabuleiro[0][0] = jogadorAtual
             binding.buttonUm.id -> tabuleiro[0][1] = jogadorAtual
@@ -79,16 +79,17 @@ class MainActivity : AppCompatActivity() {
         buttonSelecionado.setBackgroundResource(R.drawable.pessoa)
         buttonSelecionado.isEnabled = false
 
-        //Recebe o jogador vencedor através da função verificaTabuleiro. @param tabuleiro
+        //Recebe o jogador vencedor através da função verificaTabuleiro
         var vencedor = verificaVencedor(tabuleiro)
 
+        //Verifica se há um vencedor
         if (!vencedor.isNullOrBlank()) {
             Toast.makeText(this, "Vencedor: $vencedor", Toast.LENGTH_LONG).show()
             resetGame()
             return
         }
 
-        // Computador joga
+        //Se a dificuldade for "difícil", a melhor jogada para o jogador "O" é calculada
         if (dificuldade == "dificil") {
             val bestMove = getBestMove(tabuleiro)
             if (bestMove != null) {
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 updateButton(bestMove.first, bestMove.second, Color.RED)
             }
         } else {
-            // Lógica de movimento fácil
+            //Se a dificuldade for "fácil", uma jogada aleatória para o jogador "O" é gerada
             var rX: Int
             var rY: Int
             do {
@@ -121,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+    //Calcula a posição em um array com base nas coordenadas x e y
     private fun updateButton(x: Int, y: Int, color: Int) {
         val posicao = x * 3 + y
         when (posicao) {
@@ -163,6 +165,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Calcula o melhor movimento
     private fun getBestMove(tabuleiro: Array<Array<String>>): Pair<Int, Int>? {
         var bestScore = Int.MIN_VALUE
         var move: Pair<Int, Int>? = null
@@ -224,8 +227,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun verificaVencedor(tabuleiro: Array<Array<String>>): String? {
+       
         // Verifica linhas e colunas
         for (i in 0 until 3) {
+            
             //Verifica se há três itens iguais na linha
             if (tabuleiro[i][0] == tabuleiro[i][1] && tabuleiro[i][1] == tabuleiro[i][2] && tabuleiro[i][0].isNotEmpty()) {
                 return tabuleiro[i][0]
@@ -235,6 +240,7 @@ class MainActivity : AppCompatActivity() {
                 return tabuleiro[0][i]
             }
         }
+        
         // Verifica diagonais
         if (tabuleiro[0][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][2] && tabuleiro[0][0].isNotEmpty()) {
             return tabuleiro[0][0]
@@ -242,6 +248,7 @@ class MainActivity : AppCompatActivity() {
         if (tabuleiro[0][2] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][0] && tabuleiro[0][2].isNotEmpty()) {
             return tabuleiro[0][2]
         }
+        
         // Verifica a quantidade de jogadores
         var empate = 0
         for (linha in tabuleiro) {
@@ -251,11 +258,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        //Se existem 9 jogadas e não há três letras iguais, houve um empate
+        
+        //Verifica se há empate
         if (empate == 9) {
             return "Empate"
         }
-        // Nenhum vencedor
+        
+        //Nenhum vencedor
         return null
     }
 }
